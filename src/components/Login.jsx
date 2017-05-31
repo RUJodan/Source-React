@@ -18,7 +18,7 @@ export default class Login extends React.Component {
     	});
 	};
 
-		login = async event => {
+	login = async event => {
 		event.preventDefault();
 		const response = await fetch('/login', {  
 			method: 'POST',
@@ -33,10 +33,8 @@ export default class Login extends React.Component {
 		});
 
 		const json = await response.json();
-		console.log(json);
 		let classFlag = "success";
 		if (json.flag) {
-			console.log("Login failed");
 			classFlag = "error";
 		}
 		this.setState({

@@ -24,8 +24,10 @@ const server = app.listen(8080, () => {
 
 //GET/POST routing (JSX templates, POST functions)
 import login from "./routes/login";
+import createAccount from "./routes/createAccount";
 
 app.use("/login", login);
+app.use("/createAccount", createAccount);
 
 app.get("*", (req, res) => {
 	res.sendFile(`${__dirname}/public/index.html`);

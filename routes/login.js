@@ -1,12 +1,25 @@
 "use strict";
 import express from "express";
-const router = express.Router();
 import bcrypt from "bcryptjs";
-import {login} from "../lib/posts";
 import Promise from "bluebird";
 import {Player} from "../lib/Player";
+
+const router = express.Router();
+const db = require("../lib/db");
 	
 Promise.promisifyAll(bcrypt);
+
+//log user into dashboard
+async function login(user) {
+	//check for player existance
+	const query = "SELECT id, username, password FROM players WHERE username = ?";
+	const params = [user];
+	const rows = await db.query(query, params);
+	
+	//if results, return them, otherwise return empty array (non existing account)
+	if (!rows.length) return [];
+	return [rows[0]];
+}
 
 /*
 	Routing for /login
@@ -17,35 +30,30 @@ Promise.promisifyAll(bcrypt);
 		- Reject if account does not exist or password is wrong
  */
 router.route("/")
-	.post((req, res) => {
-		login(req.body.username).spread(user => {
-			let response = {
-				"flag" : true,
-				"msg" : ""
-			} //fetch player details
-			if (!user) {
-				response.msg = "This username does not exist!";
-				return res.json(response);
-			}
-			console.log(req.body.password, user.password)
-			bcrypt.compareAsync(req.body.password, user.password).then(bool => { //compare to password hash
-				console.log("compared pass", bool)
-				if (bool) { //create session, return success status
-					// req.session.loggedIn = true;
-					// req.session.user = user.id;
-					// req.session.player = new Player(user.id, user.username);
-					response.msg = "You have logged in!";
-					response.flag = false;
-					//console.log("Player", req.session.player);
-					console.log("Logging in user");
-				} else {
-					//reject, password is wrong
-					response.msg = "Your username and or password is incorrect."
-					response.flag = true;
-				}
-				return res.json(response)
-			});
-		});
+	.post(async (req, res) => {
+		const user = await login(req.body.username);
+		let response = {
+			"flag" : true,
+			"msg" : ""
+		} //fetch player details
+		if (!user) {
+			response.msg = "This username does not exist!";
+			return res.json(response);
+		}
+		const bool = await bcrypt.compareAsync(req.body.password, user[0].password); //compare to password hash
+		if (bool) { //create session, return success status
+			// req.session.loggedIn = true;
+			// req.session.user = user.id;
+			// req.session.player = new Player(user.id, user.username);
+			response.msg = "You have logged in!";
+			response.flag = false;
+			//console.log("Player", req.session.player);
+		} else {
+			//reject, password is wrong
+			response.msg = "Your username and or password is incorrect."
+			response.flag = true;
+		}
+		return res.json(response)
 	});
 
 export default router;
