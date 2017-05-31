@@ -1,21 +1,19 @@
 import React from 'react';
 import {render} from 'react-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+
+//import jsx
 import Login from './components/Login.jsx';
+import Create from './components/Create.jsx';
 
 import './index.scss';
 
-class App extends React.Component {
-	render() {
-		return(
-			<div>
-				<h2>SourceUndead</h2>
-				<div id="error"></div>
-				<div className="container">
-					<Login />
-				</div>
-			</div>
-		);
-	}
-}
-
-render(<App/>, document.getElementById('root'));
+render((
+	<Router>
+		<div>
+			<Route exact path="/" component={Login} />
+			<Route path="/create" component={Create} />
+			<Route path='/login' component={Login} />
+		</div>
+	</Router>
+), document.getElementById('root'))
