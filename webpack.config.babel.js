@@ -11,16 +11,19 @@ module.exports = {
         loaders: [
             {
                 test: /\.jsx$/,
-                loader: 'babel-loader'
+                loader: 'babel-loader',
+                exclude: [ /node_modules/ ]
             },
             {
                 test: /\.scss?/,
                 loaders: ['style-loader', 'css-loader', 'sass-loader'],
+                exclude: [ /node_modules/ ]
             }
         ]
     },
     stats: {
         colors: true
     },
-    devtool: 'source-map'
+    devtool: 'source-map',
+    target: 'node'
 };

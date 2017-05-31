@@ -48,7 +48,6 @@ router.route("/")
 			response.msg = "This username does not exist!";
 			return res.json(response);
 		}
-		console.log("Check", password, user[0].password)
 		const bool = await bcrypt.compareAsync(password, user[0].password); //compare to password hash
 		if (bool) { //create session, return success status
 			// req.session.loggedIn = true;
