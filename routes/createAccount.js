@@ -22,7 +22,7 @@ async function createAccount(user, pass, email) {
 		const password = await bcrypt.hashAsync(pass, 11);
 		const sql = "INSERT INTO players (username,email,password) VALUES (?, ?, ?)";
 		const params = [user, email, password];
-		db.query(sql, params);
+		await db.query(sql, params);
 		
 		return {
 			"msg" : "Your account was created! You will be redirected to the login page in 2 seconds.",
