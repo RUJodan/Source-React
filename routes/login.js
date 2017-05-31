@@ -18,7 +18,7 @@ Promise.promisifyAll(bcrypt);
  */
 router.route("/")
 	.post((req, res) => {
-		login(req.body.user).spread(user => {
+		login(req.body.username).spread(user => {
 			let response = {
 				"flag" : true,
 				"msg" : ""
@@ -27,17 +27,17 @@ router.route("/")
 				response.msg = "This username does not exist!";
 				return res.json(response);
 			}
-			console.log(req.body.pass, user.password)
-			bcrypt.compareAsync(req.body.pass, user.password).then(bool => { //compare to password hash
+			console.log(req.body.password, user.password)
+			bcrypt.compareAsync(req.body.password, user.password).then(bool => { //compare to password hash
 				console.log("compared pass", bool)
 				if (bool) { //create session, return success status
-					req.session.loggedIn = true;
-					req.session.user = user.id;
-					req.session.player = new Player(user.id, user.username);
+					// req.session.loggedIn = true;
+					// req.session.user = user.id;
+					// req.session.player = new Player(user.id, user.username);
 					response.msg = "You have logged in!";
 					response.flag = false;
-					console.log("Player", req.session.player);
-					console.log(req.session.player.user, "Logged in...", req.sessionID);
+					//console.log("Player", req.session.player);
+					console.log("Logging in user");
 				} else {
 					//reject, password is wrong
 					response.msg = "Your username and or password is incorrect."

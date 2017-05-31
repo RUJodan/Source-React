@@ -1,19 +1,13 @@
 import React from 'react';
 
-function login(event) {
-	event.preventDefault();
-	console.log(event, "button was clicked!");
-	fetch("/getJSON")
-		.then(response => response.json())
-		.then(json => console.log(json));
-}
-
-class Login extends React.Component {
+export default class Login extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			username : "",
-			password : ""
+			password : "",
+			error : "",
+			errorClass : ""
 		};
 
 		this.formChange = this.formChange.bind(this);
@@ -33,14 +27,40 @@ class Login extends React.Component {
 	login(event) {
 		event.preventDefault();
 		console.log("button was clicked!", this.state.username, this.state.password);
-		
+		fetch('/login', {  
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				username: this.state.username,
+				password: this.state.password,
+			})
+		})
+		.then(response => response.json())
+		.then(json => {
+			console.log(json);
+			let classFlag = "";
+			if (json.flag) {
+				console.log("Login failed");
+				classFlag = "error";
+			} else {
+				console.log("Login succeeded");
+				classFlag = "success";
+			}
+			this.setState({
+				errorClass : classFlag,
+				error : json.msg
+			});
+		});
 	}
 
 	render() {
 		return(
 			<div>
 				<h2>SourceUndead</h2>
-				<div id="error"></div>
+				<div className={this.state.errorClass}>{this.state.error}</div>
 				<div className="container">
 					<form>
 						<div className="row">
@@ -76,5 +96,3 @@ class Login extends React.Component {
 		);
 	}
 }
-
-export default Login;
