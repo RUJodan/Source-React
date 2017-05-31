@@ -14,8 +14,8 @@ async function createAccount(user, pass, email) {
 	const data = await db.query(check, params);
 	if (data[0].count) {
 		return {
-			"msg":"This username has been taken!",
-			"flag":true
+			"msg" : "This username has been taken!",
+			"flag" : true
 		}
 	} else {
 		//hash password with bcrypt and store account in db
@@ -25,8 +25,8 @@ async function createAccount(user, pass, email) {
 		db.query(sql, params);
 		
 		return {
-			"msg":"Your account was created! You will be redirected to the login page in 2 seconds.",
-			"flag":false
+			"msg" : "Your account was created! You will be redirected to the login page in 2 seconds.",
+			"flag" : false
 		}
 	}
 }
@@ -42,7 +42,13 @@ async function createAccount(user, pass, email) {
 router.route("/")
 	.post(async (req,res) => {
 		//destructure form body into constants
-		const {username, password, email} = req.body;
+		const { username, password, email } = req.body;
+		if (!username || !password || !email) {
+		return res.json({
+				"msg" : "Please fill out all form fields.",
+				"flag" : true
+			});
+		}
 		const json = await createAccount(username ,password ,email);
 		return res.json(json); //create/reject account, send to user
 	});

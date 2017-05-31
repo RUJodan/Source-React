@@ -17,8 +17,8 @@ async function login(user) {
 	const rows = await db.query(query, params);
 	
 	//if results, return them, otherwise return empty array (non existing account)
-	if (!rows.length) return [];
-	return [rows[0]];
+	if (!rows.length) return false;
+	return rows;
 }
 
 /*
@@ -31,7 +31,15 @@ async function login(user) {
  */
 router.route("/")
 	.post(async (req, res) => {
-		const user = await login(req.body.username);
+		const { username, password } = req.body;
+		if (!username || !password) {
+			return res.json({
+				"msg" : "Please fill out all form fields.",
+				"flag" : true
+			});
+		}
+		const user = await login(username);
+		console.log(user);
 		let response = {
 			"flag" : true,
 			"msg" : ""
@@ -40,7 +48,8 @@ router.route("/")
 			response.msg = "This username does not exist!";
 			return res.json(response);
 		}
-		const bool = await bcrypt.compareAsync(req.body.password, user[0].password); //compare to password hash
+		console.log("Check", password, user[0].password)
+		const bool = await bcrypt.compareAsync(password, user[0].password); //compare to password hash
 		if (bool) { //create session, return success status
 			// req.session.loggedIn = true;
 			// req.session.user = user.id;
@@ -50,7 +59,7 @@ router.route("/")
 			//console.log("Player", req.session.player);
 		} else {
 			//reject, password is wrong
-			response.msg = "Your username and or password is incorrect."
+			response.msg = "Your username or password is incorrect."
 			response.flag = true;
 		}
 		return res.json(response)
