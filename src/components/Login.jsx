@@ -1,5 +1,20 @@
 import React from 'react';
 
+async function tryLogin(user, pass) {
+	const json = await fetch('/login', {  
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			username: user,
+			password: pass,
+		})
+	});
+	return json.json();
+}
+
 export default class Login extends React.Component {
 	state = {
 		username : "",
@@ -7,7 +22,7 @@ export default class Login extends React.Component {
 		error : "",
 		errorClass : ""
 	};
-	
+
 	formChange = event => {
 		const target = event.target;
 		const value = target.value;
@@ -20,31 +35,19 @@ export default class Login extends React.Component {
 
 	login = event => {
 		event.preventDefault();
-		console.log("button was clicked!", this.state.username, this.state.password);
-		fetch('/login', {  
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				username: this.state.username,
-				password: this.state.password,
-			})
-		})
-		.then(response => response.json())
-		.then(json => {
-			console.log(json);
-			let classFlag = "success";
-			if (json.flag) {
-				console.log("Login failed");
-				classFlag = "error";
-			}
-			this.setState({
-				errorClass : classFlag,
-				error : json.msg
+		const json = tryLogin(this.state.username, this.state.password)
+			.then(json => {
+				console.log(json);
+				let classFlag = "success";
+				if (json.flag) {
+					console.log("Login failed");
+					classFlag = "error";
+				}
+				this.setState({
+					errorClass : classFlag,
+					error : json.msg
+				});
 			});
-		});
 	};
 
 	render = _ => {
