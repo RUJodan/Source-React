@@ -23,3 +23,6 @@ yarn-error.log*
 # build files
 /public/app.js
 /public/app.js.map
+
+# db settings
+settings.js

@@ -1,20 +1,14 @@
 import React from 'react';
 
 export default class Login extends React.Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			username : "",
-			password : "",
-			error : "",
-			errorClass : ""
-		};
-
-		this.formChange = this.formChange.bind(this);
-		this.login = this.login.bind(this);
-	}
-
-	formChange(event) {
+	state = {
+		username : "",
+		password : "",
+		error : "",
+		errorClass : ""
+	};
+	
+	formChange = event => {
 		const target = event.target;
 		const value = target.value;
 		const name = target.name;
@@ -22,9 +16,9 @@ export default class Login extends React.Component {
 		this.setState({
     		[name]: value
     	});
-	}
+	};
 
-	login(event) {
+	login = event => {
 		event.preventDefault();
 		console.log("button was clicked!", this.state.username, this.state.password);
 		fetch('/login', {  
@@ -41,22 +35,19 @@ export default class Login extends React.Component {
 		.then(response => response.json())
 		.then(json => {
 			console.log(json);
-			let classFlag = "";
+			let classFlag = "success";
 			if (json.flag) {
 				console.log("Login failed");
 				classFlag = "error";
-			} else {
-				console.log("Login succeeded");
-				classFlag = "success";
 			}
 			this.setState({
 				errorClass : classFlag,
 				error : json.msg
 			});
 		});
-	}
+	};
 
-	render() {
+	render = _ => {
 		return(
 			<div>
 				<h2>SourceUndead</h2>
@@ -94,5 +85,5 @@ export default class Login extends React.Component {
 				</div>
 			</div>
 		);
-	}
+	};
 }
