@@ -39,7 +39,6 @@ router.route("/")
 			});
 		}
 		const user = await login(username);
-		console.log(user);
 		let response = {
 			"flag" : true,
 			"msg" : ""
@@ -49,13 +48,14 @@ router.route("/")
 			return res.json(response);
 		}
 		const bool = await bcrypt.compareAsync(password, user[0].password); //compare to password hash
-		if (bool) { //create session, return success status
-			// req.session.loggedIn = true;
-			// req.session.user = user.id;
-			// req.session.player = new Player(user.id, user.username);
+		if (bool) { 
+			//create session, return success status
+			req.loggedIn = true;
+			console.log("Setting login", req.loggedIn);
+			req.session.user = user.id;
+			req.session.player = new Player(user.id, user.username);
 			response.msg = "You have logged in!";
 			response.flag = false;
-			//console.log("Player", req.session.player);
 		} else {
 			//reject, password is wrong
 			response.msg = "Your username or password is incorrect."
