@@ -16,10 +16,18 @@ const client = redis.createClient(6379, "localhost");
 app.set("view engine", "ejs")
 	.use(express.static(`${__dirname}/public`)); //expose public folder static serve
 
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+
+//session middleware so that socket and express share the same session
+const sessionMiddleware = session({
+	secret: '1234567890QWERTY',
+	resave: false,
+	saveUninitialized: true,
+	cookie: {secure:false}
+});
 
 //create the server
 const server = app.listen(8080, () => {
@@ -29,14 +37,6 @@ const server = app.listen(8080, () => {
 
 //attach socket to process
 const io = socket.listen(server);
-
-//session middleware so that socket and express share the same session
-const sessionMiddleware = session({
-	secret: '1234567890QWERTY',
-	resave: false,
-	saveUninitialized: true,
-	cookie: {secure:false}
-});
 
 //APPLY THAT SESSION BRAH
 io.use(function(socket, next) {
@@ -69,37 +69,7 @@ let disconnection = {
 //socket routing
 let bucket = {}; //i haz a bukkit
 io.sockets.on("connection", socket => {
-	//check for disconnection, compare socket ids, and remove timeout if sockets match
-	if (disconnection.delay && disconnection.sid == socket.request.sessionID) {
-		clearTimeout(disconnection.delay);
-		disconnection.sid = null;
-		console.log(`${socket.request.session.player.user} has reconnected!`);
-	}
-	// make sure session and player exist!
-	if (socket.request.sessionID && socket.request.session.player) {
-		//init(socket); //create game redis tracker
-
-		//check for existing sessions in the bukkit
-		if (socket.request.sessionID && !bucket[socket.request.sessionID]) {
-			bucket[socket.request.session.player.id] = socket.id; //nuuu they stealin mah bukkit
-		}
-		console.log("Connection has been made", socket.request.sessionID);
-
-		//dicsonnect
-		//-dump redis TODO: into mysql
-		//empty bucket of session
-		socket.on('disconnect', function () {
-			disconnection.sid = socket.request.sessionID; //grab session id
-			disconnection.delay = setTimeout(() => {
-				//set timeout to variable, in case of reconnection
-				console.log(`${socket.request.session.player.user} has disconnected`);
-				delete bucket[socket.request.sessionID];
-				const msg = `${socket.request.session.player.user} has disconnected`;
-				//emit the disconnection event
-				io.sockets.emit('disconnect', {data : msg});
-			}, 30000); //player has 30 seconds to reconnect before force logout/leave match
-		});
-	}
+	console.log("Socket connection", socket.request.sessionID);
 });
 
 export {client};

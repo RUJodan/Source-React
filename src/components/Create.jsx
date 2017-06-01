@@ -32,7 +32,8 @@ export default class Create extends React.Component {
 				username: this.state.username,
 				password: this.state.password,
 				email: this.state.email
-			})
+			}),
+			credentials : 'include'
 		});
 
 		const json = await response.json();

@@ -1,4 +1,7 @@
 import React from 'react';
+import io from 'socket.io-client';
+
+const socket = io() 
 
 export default class Login extends React.Component {
 	state = {
@@ -29,7 +32,8 @@ export default class Login extends React.Component {
 			body: JSON.stringify({
 				username: this.state.username,
 				password: this.state.password,
-			})
+			}),
+			credentials: 'include'
 		});
 
 		const json = await response.json();
