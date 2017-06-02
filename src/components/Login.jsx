@@ -1,9 +1,10 @@
 import React from 'react';
 import io from 'socket.io-client';
+import { withRouter } from 'react-router';
 
 const socket = io() 
 
-export default class Login extends React.Component {
+export default withRouter(class Login extends React.Component {
 	state = {
 		username : "",
 		password : "",
@@ -45,6 +46,12 @@ export default class Login extends React.Component {
 			errorClass : classFlag,
 			error : json.msg
 		});
+		if (!json.flag) {
+			setTimeout(_ => {
+				console.log("redirecting to index", this.props);
+				this.props.history.go('/');
+			}, 1000);
+		}
 	};
 
 	render = _ => {
@@ -86,4 +93,4 @@ export default class Login extends React.Component {
 			</div>
 		);
 	};
-}
+});
