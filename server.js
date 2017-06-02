@@ -49,12 +49,14 @@ app.use(sessionMiddleware);
 import login from "./routes/login";
 import createAccount from "./routes/createAccount";
 import index from "./routes/index";
+import logout from "./routes/logout";
 import isLoggedIn from "./routes/isLoggedIn";
 
 app.use("/login", login);
 app.use("/createAccount", createAccount);
 app.use("/index", index);
 app.use("/isLoggedIn", isLoggedIn);
+app.use("/logout", logout);
 
 app.get("*", (req, res) => {
 	res.sendFile(`${__dirname}/public/index.html`);

@@ -25,6 +25,10 @@ render((
 				return <AuthComponent authRoute={CreateGame} authFallback={Login} />
 			}} />
 			<Route path="/create" component={Create} />
+			<Route path="/logout" render={ _ => {
+				fetch("/logout");
+				return <AuthComponent authRoute={Login} authFallback={Login} />
+			}} />
 			<Route path='/login' component={Login} />
 		</div>
 	</Router>
