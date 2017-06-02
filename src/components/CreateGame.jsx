@@ -5,6 +5,9 @@ export default class CreateGame extends React.Component {
 	render() {
 		return(
 			<div>
+				<div className="header twelve columns">
+					<h1>SourceUndead</h1>
+				</div>
 				<div className="twelve columns full-page">
 					<div className="nine columns stats">
 						<div className="ten columns">
@@ -51,7 +54,7 @@ export default class CreateGame extends React.Component {
 				</div>
 				<div className="footer twelve columns">
 					<div>
-						<Link to="https://github.com/RUJodan/SourceUndead">Follow this game on GitHub!</Link>
+						<a href="https://github.com/RUJodan/SourceUndead">Follow this game on GitHub!</a>
 					</div>
 					<div className="menu-item">
 						<i className=" fa fa-power-off"></i><Link to="/logout">Logout</Link>

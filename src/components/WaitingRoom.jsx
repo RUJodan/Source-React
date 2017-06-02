@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-export default class Lobby extends React.Component {
+export default class WaitingRoom extends React.Component {
 	render() {
 		return(
 			<div>
@@ -12,19 +12,15 @@ export default class Lobby extends React.Component {
 					<div className="nine columns stats">
 						<div className="ten columns">
 							<fieldset>
-								<legend>Pick a game</legend>
-								<div id="alert"></div>
-								<div className="twelve columns" id="lobby"></div>
+								<legend>Waiting Room</legend>
+								<div className="twelve columns" id="waiting"></div>
 							</fieldset>
 						</div>
 					</div>
 					<div className="three columns menu full-page">
 						<h5>Lobby Menu</h5>
 						<div className="menu-item twelve columns">
-							<i className="menu-option fa fa-line-chart fa-2x"></i><Link to="/" className="menu-option-text">Statistics</Link>
-						</div>
-						<div className="menu-item twelve columns">
-							<i className="menu-option fa fa-gamepad fa-2x"></i><Link to="/createGame" className="menu-option-text">Create a Game</Link>
+							<i className="menu-option fa fa-close fa-2x"></i><Link to="/lobby" class="menu-option-text">Leave Game</Link>
 						</div>
 					</div>
 				</div>
