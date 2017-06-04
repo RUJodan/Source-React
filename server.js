@@ -44,12 +44,14 @@ io.use(function(socket, next) {
 });
 
 app.use(sessionMiddleware);
+app.set("socket", io);
 
 //GET/POST routing (JSX templates, POST functions)
 import login from "./routes/login";
 import createAccount from "./routes/createAccount";
 import index from "./routes/index";
 import logout from "./routes/logout";
+import getOpenLobbies from "./routes/getOpenLobbies";
 import isLoggedIn from "./routes/isLoggedIn";
 
 app.use("/login", login);
@@ -57,6 +59,7 @@ app.use("/createAccount", createAccount);
 app.use("/index", index);
 app.use("/isLoggedIn", isLoggedIn);
 app.use("/logout", logout);
+app.use("/getOpenLobbies", getOpenLobbies);
 
 app.get("*", (req, res) => {
 	res.sendFile(`${__dirname}/public/index.html`);
@@ -68,10 +71,20 @@ let disconnection = {
 	delay : null //timeout id
 };
 
+//socket functions
+import { createGame, joinGame } from "./routes/io-functions";
+
 //socket routing
 let bucket = {}; //i haz a bukkit
 io.sockets.on("connection", socket => {
 	console.log("Socket connection", socket.request.sessionID);
+	socket.on("createGame", data => {
+		createGame(data, socket);
+	});
+
+	socket.on("joinGame", data => {
+		joinGame(data, socket);
+	});
 });
 
 export {client};

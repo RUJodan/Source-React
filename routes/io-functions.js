@@ -1,0 +1,124 @@
+"use strict";
+import { client, io } from "../server";
+import Promise from 'bluebird';
+
+function uuid() {
+	let d = new Date().getTime();
+	let uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		let r = (d + Math.random()*16)%16 | 0;
+		d = Math.floor(d/16);
+		return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+	});
+	return uuid;
+}
+
+//define async function
+async function isInLobby(id, socket) {
+	const keysAsync = Promise.promisify(client.keys, {context: client});
+	const smembersAsync = Promise.promisify(client.smembers, {context: client});
+	const hgetallAsync = Promise.promisify(client.hgetall, {context: client});
+
+	const games = await keysAsync(id);
+	//await response from mapped smembers method
+	const players = await Promise.all(games.map(game => smembersAsync(game)));
+	
+	let exit = false;
+	players.forEach(p => {
+		if (id == socket.request.session.player.id) {
+			exit = true;
+		} else {
+			p.forEach(id => {
+				if (id == socket.request.session.player.id) {
+					exit = true;
+				}
+			});
+		}
+	});
+	if (exit) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+async function countPlayer(game) {
+	const scardAsync = Promise.promisify(client.scard, {context:client});
+	const keyLength = await scardAsync(game);
+	return keyLength;
+}
+
+export async function createGame(data, socket) {
+	const keysAsync = Promise.promisify(client.keys, {context: client});
+	const smembersAsync = Promise.promisify(client.smembers, {context: client});
+	const hgetallAsync = Promise.promisify(client.hgetall, {context: client});
+	const scardAsync = Promise.promisify(client.scard, {context:client});
+	const { lobbyName, privateLobby } = data;
+	if (!lobbyName) {
+		return res.json({
+			"msg" : "Your lobby requires a name!",
+			"flag" : true
+		});
+	}
+	const inLobby = await isInLobby("*game*", socket);
+	console.log("create room check", inLobby);
+	if (!inLobby) {
+		const id = uuid();
+		client.sadd("game-"+id, socket.request.session.player.id);
+		client.hmset(socket.request.session.player.id, socket.request.session.player);
+		client.hmset("metadata-"+id, {
+			"id":id,
+			"lobbyName":lobbyName,
+			"private": privateLobby
+		});
+
+		socket.emit("joinLobby", {
+			"msg":"Your lobby was created! You will be redirected to your lobby momentarily..",
+			"flag":false,
+			"id":`game-${id}`
+		});
+	} else {
+		console.log("emitting socket for lobby")
+		socket.emit("alreadyInLobby", {
+			msg: "You are already in a lobby and cannot join another",
+			success: false
+		});
+	}
+}
+
+export async function joinGame(data, socket) {
+	const keysAsync = Promise.promisify(client.keys, {context: client});
+	const smembersAsync = Promise.promisify(client.smembers, {context: client});
+	const hgetallAsync = Promise.promisify(client.hgetall, {context: client});
+
+	console.log("join game", data);
+
+	const flag = await isInLobby(data.gameId, socket);
+
+	console.log("do not add to lobby", flag);
+	if (flag) {
+		socket.emit("alreadyInLobby", {
+			msg: "You are already in a lobby and cannot join another",
+			success: false
+		});
+		return false; //exit
+	}
+	const count = await countPlayer(data.gameId);
+	if (count >= 15) return false; //do not add player, lobby is full!
+	else { 
+		client.sadd(data.gameId, socket.request.session.player.id);
+		socket.request.session.player.playerGameId = data.gameId;
+		client.hmset(socket.request.session.player.id, socket.request.session.player, (err, reply) => {
+			if (err) {
+				res.send({
+					msg: "There was an error joining this lobby. Please try again.",
+					success: false
+				});
+			} else {
+				socket.emit("loadWaitingRoom", {
+					msg: "You have joined the game!",
+					success: true
+				});
+			}
+		});
+	}
+}

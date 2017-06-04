@@ -1,8 +1,5 @@
 import React from 'react';
-import io from 'socket.io-client';
 import { withRouter } from 'react-router';
-
-const socket = io() 
 
 export default withRouter(class Login extends React.Component {
 	state = {

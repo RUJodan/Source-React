@@ -1,8 +1,62 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { withRouter } from 'react-router';
 
-export default class Lobby extends React.Component {
+export default withRouter(class Lobby extends React.Component {
+	state = {
+		games : []
+	}
+
+	async componentDidMount() {
+		const response = await fetch("/getOpenLobbies");
+		const json = await response.json();
+		this.setState({
+			games : json,
+			errorClass : "",
+			error : ""
+		});
+
+		socket.on("alreadyInLobby", data => {
+			this.setState({
+				errorClass : "error",
+				error : data.msg
+			});
+		});
+
+		socket.on("loadWaitingRoom", data => {
+			this.setState({
+				errorClass : "success",
+				error : data.msg
+			});
+			setTimeout(_ => {
+				this.props.history.go(`/waiting/${data.id}`);
+			}, 1000);
+		});
+	}
+
+
+	joinGame(id, event) {
+		socket.emit("joinGame", {
+			gameId : id
+		})
+	}
+
 	render() {
+		const gamesList = this.state.games.map((gameObject, index) => {
+			return  <div className="row" key={index}>
+						<div className="twelve columns">
+							<input 
+								type="text"
+								disabled="true" 
+								value = {gameObject.meta.lobbyName + " ("+gameObject.players.length+"/15)"} />
+							<button 
+								onClick={this.joinGame.bind(this, gameObject.game)}
+								className="button">
+								Join Game
+							</button>
+						</div>
+					</div>
+		});
 		return(
 			<div>
 				<div className="header twelve columns">
@@ -13,8 +67,10 @@ export default class Lobby extends React.Component {
 						<div className="ten columns">
 							<fieldset>
 								<legend>Pick a game</legend>
-								<div id="alert"></div>
-								<div className="twelve columns" id="lobby"></div>
+								<div className={this.state.errorClass}>{this.state.error}</div>
+								<div className="twelve columns" id="lobby">
+									{ gamesList }
+								</div>
 							</fieldset>
 						</div>
 					</div>
@@ -39,4 +95,4 @@ export default class Lobby extends React.Component {
 			</div>
 		)
 	}
-}
+});

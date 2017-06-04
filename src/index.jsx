@@ -29,7 +29,7 @@ render((
 			<Route path="/map" render={ _ => {
 				return <AuthComponent authRoute={GameMap} authFallback={Login} />
 			}} />
-			<Route path="/waiting" render={ _ => {
+			<Route path="/waiting/:id" render={ _ => {
 				return <AuthComponent authRoute={WaitingRoom} authFallback={Login} />
 			}} />
 			<Route path="/create" component={CreateAccount} />
