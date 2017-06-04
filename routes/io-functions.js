@@ -12,6 +12,28 @@ function uuid() {
 	return uuid;
 }
 
+export async function removePlayer(id, socket) {
+	const keysAsync = Promise.promisify(client.keys, {context: client});
+	const smembersAsync = Promise.promisify(client.smembers, {context: client});
+	const hgetallAsync = Promise.promisify(client.hgetall, {context: client});
+
+	const games = await keysAsync("*game*");
+	let gameId = "";
+	const players = await Promise.all(games.map(game => {
+		gameId = game;
+		return smembersAsync(game)
+	}));
+	players.forEach(player => {
+		player.forEach(id => {
+			console.log(id, gameId);
+			if (id == socket.request.session.player.id) {
+				client.srem(gameId, id);
+				socket.broadcast.emit("waitingRoomRefresh", {id:gameId});
+			}
+		});
+	});
+}
+
 //define async function
 async function isInLobby(id, socket) {
 	const keysAsync = Promise.promisify(client.keys, {context: client});
@@ -24,15 +46,11 @@ async function isInLobby(id, socket) {
 	
 	let exit = false;
 	players.forEach(p => {
-		if (id == socket.request.session.player.id) {
-			exit = true;
-		} else {
-			p.forEach(id => {
-				if (id == socket.request.session.player.id) {
-					exit = true;
-				}
-			});
-		}
+		p.forEach(id => {
+			if (id == socket.request.session.player.id) {
+				exit = true;
+			}
+		});
 	});
 	if (exit) {
 		return true;
@@ -60,7 +78,6 @@ export async function createGame(data, socket) {
 		});
 	}
 	const inLobby = await isInLobby("*game*", socket);
-	console.log("create room check", inLobby);
 	if (!inLobby) {
 		const id = uuid();
 		client.sadd("game-"+id, socket.request.session.player.id);
@@ -78,7 +95,6 @@ export async function createGame(data, socket) {
 		});
 		socket.broadcast.emit("refreshLobby");
 	} else {
-		console.log("emitting socket for lobby")
 		socket.emit("alreadyInLobbyCreateGame", {
 			msg: "You are already in a lobby and cannot join another",
 			success: false
@@ -91,11 +107,7 @@ export async function joinGame(data, socket) {
 	const smembersAsync = Promise.promisify(client.smembers, {context: client});
 	const hgetallAsync = Promise.promisify(client.hgetall, {context: client});
 
-	console.log("join game", data);
-
-	const flag = await isInLobby(data.gameId, socket);
-
-	console.log("do not add to lobby", flag);
+	const flag = await isInLobby("*game*", socket);
 	if (flag) {
 		socket.emit("alreadyInLobbyJoinGame", {
 			msg: "You are already in a lobby and cannot join another",
@@ -120,6 +132,7 @@ export async function joinGame(data, socket) {
 					success: true
 				});
 				socket.broadcast.emit("refreshLobby");
+				socket.broadcast.emit("waitingRoomRefresh", {id:data.gameId});
 			}
 		});
 	}

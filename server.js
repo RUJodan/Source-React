@@ -52,6 +52,7 @@ import createAccount from "./routes/createAccount";
 import index from "./routes/index";
 import logout from "./routes/logout";
 import getOpenLobbies from "./routes/getOpenLobbies";
+import waitingRoom from "./routes/waitingRoom";
 import isLoggedIn from "./routes/isLoggedIn";
 
 app.use("/login", login);
@@ -60,6 +61,7 @@ app.use("/index", index);
 app.use("/isLoggedIn", isLoggedIn);
 app.use("/logout", logout);
 app.use("/getOpenLobbies", getOpenLobbies);
+app.use("/waitingRoom/", waitingRoom)
 
 app.get("*", (req, res) => {
 	res.sendFile(`${__dirname}/public/index.html`);
@@ -72,7 +74,7 @@ let disconnection = {
 };
 
 //socket functions
-import { createGame, joinGame } from "./routes/io-functions";
+import { createGame, joinGame, removePlayer } from "./routes/io-functions";
 
 //socket routing
 let bucket = {}; //i haz a bukkit
@@ -85,6 +87,10 @@ io.sockets.on("connection", socket => {
 	socket.on("joinGame", data => {
 		joinGame(data, socket);
 	});
+
+	socket.on("removePlayer", _ => {
+		removePlayer(socket.request.session.player.id, socket);
+	})
 });
 
 export {client};
