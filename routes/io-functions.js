@@ -78,7 +78,7 @@ export async function createGame(data, socket) {
 		});
 	} else {
 		console.log("emitting socket for lobby")
-		socket.emit("alreadyInLobby", {
+		socket.emit("alreadyInLobbyCreateGame", {
 			msg: "You are already in a lobby and cannot join another",
 			success: false
 		});
@@ -96,7 +96,7 @@ export async function joinGame(data, socket) {
 
 	console.log("do not add to lobby", flag);
 	if (flag) {
-		socket.emit("alreadyInLobby", {
+		socket.emit("alreadyInLobbyJoinGame", {
 			msg: "You are already in a lobby and cannot join another",
 			success: false
 		});

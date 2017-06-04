@@ -16,7 +16,7 @@ export default withRouter(class Lobby extends React.Component {
 			error : ""
 		});
 
-		socket.on("alreadyInLobby", data => {
+		socket.on("alreadyInLobbyJoinGame", data => {
 			this.setState({
 				errorClass : "error",
 				error : data.msg
