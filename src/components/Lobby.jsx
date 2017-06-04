@@ -32,13 +32,22 @@ export default withRouter(class Lobby extends React.Component {
 				this.props.history.go(`/waiting/${data.id}`);
 			}, 1000);
 		});
+
+		socket.on("refreshLobby", async _ => {
+			const refresh = await fetch("/getOpenLobbies");
+			const games = await refresh.json();
+			this.setState({
+				games : games
+			});
+			console.log(this.state.games);
+		})
 	}
 
 
 	joinGame(id, event) {
 		socket.emit("joinGame", {
 			gameId : id
-		})
+		});
 	}
 
 	render() {

@@ -76,6 +76,7 @@ export async function createGame(data, socket) {
 			"flag":false,
 			"id":`game-${id}`
 		});
+		socket.broadcast.emit("refreshLobby");
 	} else {
 		console.log("emitting socket for lobby")
 		socket.emit("alreadyInLobbyCreateGame", {
@@ -118,6 +119,7 @@ export async function joinGame(data, socket) {
 					msg: "You have joined the game!",
 					success: true
 				});
+				socket.broadcast.emit("refreshLobby");
 			}
 		});
 	}
