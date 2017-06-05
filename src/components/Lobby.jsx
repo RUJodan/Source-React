@@ -30,6 +30,7 @@ export default withRouter(class Lobby extends React.Component {
 			});
 			setTimeout(_ => {
 				this.props.history.go(`/waiting/${data.id}`);
+				this.props.history.replace(`/waiting/${data.id}`);
 			}, 1000);
 		});
 

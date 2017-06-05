@@ -19,16 +19,18 @@ async function getWaitingRoomPlayers(id) {
 	//await response from mapped smembers method
 	const players = await Promise.all(games.map(game => smembersAsync(game)));
 	//metadata
-	const playerData = await Promise.all(players[0].map(player => hgetallAsync(player)));
-	const metakey = await keysAsync("*metadata*");
-	const data = await Promise.all(metakey.map(meta => hgetallAsync(meta)));
-	//compile results of awaited methods into object to return
-	const combined = games.map((game, i) => ({
-		game,
-		players: playerData,
-		meta: data.filter(d => d.id === game.replace("game-",""))[0]
-	}));
-	return combined.filter(game => game.players.length);
+	if (players.length) {
+		const playerData = await Promise.all(players[0].map(player => hgetallAsync(player)));
+		const metakey = await keysAsync("*metadata*");
+		const data = await Promise.all(metakey.map(meta => hgetallAsync(meta)));
+		//compile results of awaited methods into object to return
+		const combined = games.map((game, i) => ({
+			game,
+			players: playerData,
+			meta: data.filter(d => d.id === game.replace("game-",""))[0]
+		}));
+		return combined.filter(game => game.players.length);
+	}
 }
 
 /*

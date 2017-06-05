@@ -16,6 +16,7 @@ export async function removePlayer(id, socket) {
 	const keysAsync = Promise.promisify(client.keys, {context: client});
 	const smembersAsync = Promise.promisify(client.smembers, {context: client});
 	const hgetallAsync = Promise.promisify(client.hgetall, {context: client});
+	const scardAsync = Promise.promisify(client.scard, {context: client});
 
 	const games = await keysAsync("*game*");
 	let gameId = "";
@@ -24,10 +25,19 @@ export async function removePlayer(id, socket) {
 		return smembersAsync(game)
 	}));
 	players.forEach(player => {
-		player.forEach(id => {
+		player.forEach(async id => {
 			console.log(id, gameId);
 			if (id == socket.request.session.player.id) {
 				client.srem(gameId, id);
+				const count = await scardAsync(gameId);
+				console.log("Count in game", count);
+				if (!count) {
+					console.log("game is empty, deleting lobby and meta data");
+					client.del(gameId);
+					const metaId = gameId.replace("game-", "");
+					client.del(`metadata-${metaId}`);
+					client.del(socket.request.session.player.id);
+				}
 				socket.broadcast.emit("waitingRoomRefresh", {id:gameId});
 			}
 		});
@@ -91,7 +101,7 @@ export async function createGame(data, socket) {
 		socket.emit("joinLobby", {
 			"msg":"Your lobby was created! You will be redirected to your lobby momentarily..",
 			"flag":false,
-			"id":`game-${id}`
+			"id":`${id}`
 		});
 		socket.broadcast.emit("refreshLobby");
 	} else {

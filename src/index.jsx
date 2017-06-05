@@ -1,5 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
+import { browserHistory } from 'react-router'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 
 //import jsx
@@ -15,7 +16,7 @@ import AuthComponent from './components/AuthComponent.jsx';
 import './index.scss';
 
 render((
-	<Router>
+	<Router history={ browserHistory }>
 		<div>
 			<Route exact path="/" render={ _ => {
 				return <AuthComponent authRoute={Index} authFallback={Login} />

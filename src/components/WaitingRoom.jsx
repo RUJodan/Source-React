@@ -12,6 +12,8 @@ export default withRouter(class WaitingRoom extends React.Component {
 	leaveLobby(event) {
 		event.preventDefault();
 		socket.emit("removePlayer");
+		this.props.history.replace('/lobby');
+		this.props.history.go('/lobby');
 	}
 
 	async componentDidMount() {

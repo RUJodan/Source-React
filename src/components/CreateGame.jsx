@@ -31,6 +31,7 @@ export default withRouter(class CreateGame extends React.Component {
 			if (!data.flag) {
 				setTimeout(_ => {
 					console.log("redirecting to index", this.props);
+					this.props.history.replace(`/waiting/${data.id}`);
 					this.props.history.go(`/waiting/${data.id}`);
 				}, 1000);
 			}
