@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import { MenuSideBar } from './MenuSideBar.jsx';
 
 export default withRouter(class WaitingRoom extends React.Component {
 	state = {

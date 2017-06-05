@@ -55,10 +55,10 @@ export default withRouter(class Login extends React.Component {
 	render = _ => {
 		return(
 			<div>
-				<h2>SourceUndead</h2>
-				<div className={this.state.errorClass}>{this.state.error}</div>
+				<h2 className="title">SourceUndead</h2>
 				<div className="container">
 					<form>
+						<div className={this.state.errorClass}>{this.state.error}</div>
 						<div className="row">
 							<div className="twelve columns">
 								<label htmlFor="name">Username</label>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import { MenuSideBar } from './MenuSideBar.jsx';
 
 export default withRouter(class Lobby extends React.Component {
 	state = {
@@ -68,39 +69,16 @@ export default withRouter(class Lobby extends React.Component {
 					</div>
 		});
 		return(
-			<div>
-				<div className="header twelve columns">
-					<h1>SourceUndead</h1>
-				</div>
-				<div className="twelve columns full-page">
-					<div className="nine columns stats">
-						<div className="ten columns">
-							<fieldset>
-								<legend>Pick a game</legend>
-								<div className={this.state.errorClass}>{this.state.error}</div>
-								<div className="twelve columns" id="lobby">
-									{ gamesList }
-								</div>
-							</fieldset>
+			<div className='wrapper'>
+				<MenuSideBar />
+				<div className='content'>
+					<fieldset>
+						<legend>Pick a game</legend>
+						<div className={this.state.errorClass}>{this.state.error}</div>
+						<div className="twelve columns" id="lobby">
+							{ gamesList }
 						</div>
-					</div>
-					<div className="three columns menu full-page">
-						<h5>Lobby Menu</h5>
-						<div className="menu-item twelve columns">
-							<i className="menu-option fa fa-line-chart fa-2x"></i><Link to="/" className="menu-option-text">Statistics</Link>
-						</div>
-						<div className="menu-item twelve columns">
-							<i className="menu-option fa fa-gamepad fa-2x"></i><Link to="/createGame" className="menu-option-text">Create a Game</Link>
-						</div>
-					</div>
-				</div>
-				<div className="footer twelve columns">
-					<div>
-						<a href="https://github.com/RUJodan/SourceUndead">Follow this game on GitHub!</a>
-					</div>
-					<div className="menu-item">
-						<i className=" fa fa-power-off"></i><Link to="/logout">Logout</Link>
-					</div>
+					</fieldset>
 				</div>
 			</div>
 		)
