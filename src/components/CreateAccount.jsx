@@ -37,7 +37,6 @@ export default class CreateAccount extends React.Component {
 		});
 
 		const json = await response.json();
-		console.log(json)
 		let classFlag = "success";
 		if (json.flag) {
 			classFlag = "error";

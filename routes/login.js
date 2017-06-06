@@ -52,12 +52,10 @@ router.route("/")
 		if (bool) { 
 			//create session, return success status
 			req.session.loggedIn = true;
-			console.log("Setting login", req.session.loggedIn);
 			req.session.user = user[0].id;
 			req.session.player = new Player(user[0].id, user[0].username);
 			response.msg = "You have logged in!";
 			response.flag = false;
-			console.log("Session id", req.sessionID);
 		} else {
 			//reject, password is wrong
 			response.msg = "Your username or password is incorrect."

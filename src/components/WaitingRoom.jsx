@@ -40,7 +40,6 @@ export default withRouter(class WaitingRoom extends React.Component {
 	}
 
 	render() {
-		console.log(this.state);
 		let players = "";
 		if (this.state.players.players) {
 			players = this.state.players.players.map((playersObject, index) => {

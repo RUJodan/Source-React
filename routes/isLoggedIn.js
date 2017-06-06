@@ -18,7 +18,6 @@ Promise.promisifyAll(bcrypt);
  */
 router.route("/")
 	.get(async (req, res) => {
-		console.log("Is logged in", req.session.loggedIn);
 		const test = {
 			"loggedIn" : req.session.loggedIn ? true : false 
 		}

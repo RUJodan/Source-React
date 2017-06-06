@@ -45,7 +45,6 @@ export default withRouter(class Login extends React.Component {
 		});
 		if (!json.flag) {
 			setTimeout(_ => {
-				console.log("redirecting to index", this.props);
 				this.props.history.replace('/');
 				this.props.history.go('/');
 			}, 1000);

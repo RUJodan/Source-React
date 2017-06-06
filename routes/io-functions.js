@@ -26,15 +26,12 @@ export async function removePlayer(id, socket) {
 	}));
 	players.forEach(player => {
 		player.forEach(async id => {
-			console.log(id, gameId);
 			if (id == socket.request.session.player.id) {
 				client.srem(gameId, id);
 				const count = await scardAsync(gameId);
-				console.log("Count in game", count);
 				if (!count) {
-					console.log("game is empty, deleting lobby and meta data");
-					client.del(gameId);
 					const metaId = gameId.replace("game-", "");
+					client.del(gameId);
 					client.del(`metadata-${metaId}`);
 					client.del(socket.request.session.player.id);
 				}
