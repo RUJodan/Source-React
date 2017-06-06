@@ -10,7 +10,7 @@ const router = express.Router();
 //create redis handler
 //MAKE SURE REDIS IS RUNNING THIS TIME, YOU ASSJACK
 import redis from "redis";
-const client = redis.createClient(6379, "localhost");
+const client = redis.createClient(6379, process.env.REDIS_ENV || "localhost");
 
 //setup view engine for EJS templating
 app.set("view engine", "ejs")

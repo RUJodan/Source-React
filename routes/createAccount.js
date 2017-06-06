@@ -1,8 +1,6 @@
 "use strict";
 import express from "express";
 import bcrypt from "bcryptjs";
-import Promise from "bluebird";
-import {Player} from "../lib/Player";
 
 const router = express.Router();
 const db = require("../lib/db");
@@ -12,7 +10,12 @@ async function createAccount(user, pass, email) {
 	const check = "SELECT COUNT(username) AS count FROM players WHERE username=?";
 	const params = [user];
 	const data = await db.query(check, params);
-	if (data[0].count) {
+	if (!data || !data.length) {
+		return {
+			"msg": "Some error happened!",
+			"flag":true,
+		}
+	} else if (data[0].count) {
 		return {
 			"msg" : "This username has been taken!",
 			"flag" : true

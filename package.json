@@ -38,6 +38,6 @@
   },
   "scripts": {
     "build": "webpack --progress --colors --config webpack.config.babel.js",
-    "source": "babel-node server.js"
+    "start": "babel-node server.js"
   }
 }
