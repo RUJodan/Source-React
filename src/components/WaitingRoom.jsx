@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
-import { MenuSideBar } from './MenuSideBar.jsx';
 
 export default withRouter(class WaitingRoom extends React.Component {
 	state = {
@@ -50,34 +49,30 @@ export default withRouter(class WaitingRoom extends React.Component {
 						</div>
 			});
 		}
+
 		return(
-			<div>
-				<div className="header twelve columns">
-					<h1>SourceUndead</h1>
+			<div className='wrapper'>
+				<div className='sidebar'>
+					<div className='title'>
+						SourceUndead
+					</div>
+					<ul className='nav'>
+						<li>
+							<a onClick={this.leaveLobby.bind(this)} href="javascript:void()"><i className="menu-option fa fa-close fa-2x"></i> Leave Game</a>
+						</li>
+						<li>
+							<a href="https://github.com/RUJodan/SourceUndead"><i className="menu-option fa fa-github fa-2x"></i> Github</a>
+						</li>
+						<li>
+							<Link to="/logout"><i className="menu-option fa fa-power-off fa-2x"></i> Logout</Link>
+						</li>
+					</ul>
 				</div>
-				<div className="twelve columns full-page">
-					<div className="nine columns stats">
-						<div className="ten columns">
-							<fieldset>
-								<legend>{this.state.lobbyName} Waiting Room {this.state.playerCount}/15</legend>
-								<div className="twelve columns" id="waiting">{ players }</div>
-							</fieldset>
-						</div>
-					</div>
-					<div className="three columns menu full-page">
-						<h5>Lobby Menu</h5>
-						<div className="menu-item twelve columns">
-							<i className="menu-option fa fa-close fa-2x"></i><a onClick={this.leaveLobby} className="menu-option-text">Leave Game</a>
-						</div>
-					</div>
-				</div>
-				<div className="footer twelve columns">
-					<div>
-						<a href="https://github.com/RUJodan/SourceUndead">Follow this game on GitHub!</a>
-					</div>
-					<div className="menu-item">
-						<i className=" fa fa-power-off"></i><Link to="/logout">Logout</Link>
-					</div>
+				<div className='content'>
+					<fieldset>
+						<legend>{this.state.lobbyName} Waiting Room {this.state.playerCount}/15</legend>
+						<div className="twelve columns" id="waiting">{ players }</div>
+					</fieldset>
 				</div>
 			</div>
 		)

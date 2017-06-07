@@ -136,10 +136,11 @@ export async function joinGame(data, socket) {
 			} else {
 				socket.emit("loadWaitingRoom", {
 					msg: "You have joined the game!",
-					success: true
+					success: true,
+					id : data.gameId.replace("game-","")
 				});
-				socket.broadcast.emit("refreshLobby");
 				socket.broadcast.emit("waitingRoomRefresh", {id:data.gameId});
+				socket.broadcast.emit("refreshLobby");
 			}
 		});
 	}
