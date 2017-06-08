@@ -47,7 +47,7 @@ export default class CreateAccount extends React.Component {
 		});
 	};
 
-	render = _ => {
+	render() {
 		return(
 			<div>
 				<h2>SourceUndead :: Create an Account</h2>

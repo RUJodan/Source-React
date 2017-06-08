@@ -8,7 +8,7 @@ export default withRouter(class Lobby extends React.Component {
 		games : []
 	}
 
-	async componentDidMount() {
+	componentDidMount = async _ => {
 		const response = await fetch("/getOpenLobbies");
 		const json = await response.json();
 		this.setState({
@@ -41,7 +41,6 @@ export default withRouter(class Lobby extends React.Component {
 			this.setState({
 				games : games
 			});
-			console.log(this.state.games);
 		})
 	}
 

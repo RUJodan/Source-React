@@ -11,7 +11,7 @@ export default withRouter(class CreateGame extends React.Component {
 		errorClass : ""
 	};
 
-	componentDidMount() {
+	componentDidMount = _ => {
 		socket.on("alreadyInLobbyCreateGame", data => {
 			this.setState({
 				errorClass : "error",

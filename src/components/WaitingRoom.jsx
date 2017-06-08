@@ -9,14 +9,15 @@ export default withRouter(class WaitingRoom extends React.Component {
 		lobbyName : ""
 	}
 
-	leaveLobby(event) {
+	leaveLobby = event => {
 		event.preventDefault();
+		event.stopPropagation();
 		socket.emit("removePlayer");
 		this.props.history.replace('/lobby');
 		this.props.history.go('/lobby');
 	}
 
-	async componentDidMount() {
+	componentDidMount = async _ => {
 		const response = await fetch(`/waitingRoom/${this.props.match.params.id}`);
 		const json = await response.json();
 
@@ -41,6 +42,7 @@ export default withRouter(class WaitingRoom extends React.Component {
 	render() {
 		let players = "";
 		if (this.state.players.players) {
+			console.log(this.state.players.players)
 			players = this.state.players.players.map((playersObject, index) => {
 				return  <div className="row" key={index}>
 							<div className="twelve columns">
@@ -58,7 +60,7 @@ export default withRouter(class WaitingRoom extends React.Component {
 					</div>
 					<ul className='nav'>
 						<li>
-							<a onClick={this.leaveLobby.bind(this)} href="javascript:void()"><i className="menu-option fa fa-close fa-2x"></i> Leave Game</a>
+							<Link to="/lobby" onClick={this.leaveLobby.bind(this)}><i className="menu-option fa fa-close fa-2x"></i> Leave Game</Link>
 						</li>
 						<li>
 							<a href="https://github.com/RUJodan/SourceUndead"><i className="menu-option fa fa-github fa-2x"></i> Github</a>

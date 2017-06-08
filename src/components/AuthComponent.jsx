@@ -13,8 +13,9 @@ export default class AuthComponent extends React.Component {
 		auth : false
 	}
 
-	componentDidMount = _ => {
+	componentWillMount = _ => {
 		this.authorize();
+		console.log("component will mount", this.state.auth)
 	}
 
 	authorize = async _ => {
@@ -25,6 +26,7 @@ export default class AuthComponent extends React.Component {
 	}
 
 	render() {
+		console.log("component will render", this.state.auth)
 		return(
 			<div>{this.state.auth ? React.createElement(this.props.authRoute, {}) : React.createElement(this.props.authFallback, {})}</div>
 		);

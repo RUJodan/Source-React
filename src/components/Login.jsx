@@ -51,7 +51,7 @@ export default withRouter(class Login extends React.Component {
 		}
 	};
 
-	render = _ => {
+	render() {
 		return(
 			<div>
 				<h2 className="title">SourceUndead</h2>
