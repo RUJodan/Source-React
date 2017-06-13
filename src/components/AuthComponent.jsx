@@ -10,12 +10,11 @@ export async function isLoggedIn() {
 
 export default class AuthComponent extends React.Component {
 	state = {
-		auth : false
+		auth : null
 	}
 
-	componentWillMount = _ => {
+	componentWillMount = async _ => {
 		this.authorize();
-		console.log("component will mount", this.state.auth)
 	}
 
 	authorize = async _ => {
@@ -26,9 +25,16 @@ export default class AuthComponent extends React.Component {
 	}
 
 	render() {
-		console.log("component will render", this.state.auth)
+		let rendering = null;
+		if (this.state.auth === true) {
+			rendering = React.createElement(this.props.authRoute, {});
+		} else if (this.state.auth === false) {
+			rendering = React.createElement(this.props.authFallback, {});
+		}
 		return(
-			<div>{this.state.auth ? React.createElement(this.props.authRoute, {}) : React.createElement(this.props.authFallback, {})}</div>
+			<div>
+				{rendering}
+			</div>
 		);
 	}
 }

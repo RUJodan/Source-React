@@ -50,7 +50,7 @@ export default class CreateAccount extends React.Component {
 	render() {
 		return(
 			<div>
-				<h2>SourceUndead :: Create an Account</h2>
+				<h2 className="title">SourceUndead :: Create an Account</h2>
 				<div className={this.state.errorClass}>{this.state.error}</div>
 				<div className="container">
 					<form>
