@@ -3,6 +3,39 @@ import { Link } from 'react-router-dom';
 import { MenuSideBar } from './MenuSideBar.jsx';
 
 export default class GameMap extends React.Component {
+	state = {
+		x : 0,
+		y : 0
+	}
+	componentWillMount() {
+		const keyEventMap = {
+			"w" : "n",
+			"a" : "w",
+			"s" : "s",
+			"d" : "e"
+		}
+		document.addEventListener("keydown", key => {
+			if (["w","a","s","d"].includes(key.key)) {
+				socket.emit("movePlayer", { "direction" : keyEventMap[key.key] });
+			}
+		});
+
+		socket.on("location", map => {
+			this.setState({
+				x : map.data.x,
+				y : map.data.y
+			});
+		});
+
+		socket.on("locations", data => {
+			console.log(data)
+		});
+
+		socket.on("bearing", data => {
+			console.log(data);
+		});
+	}
+
 	render() {
 		return(
 			<div className='wrapper'>
@@ -22,7 +55,7 @@ export default class GameMap extends React.Component {
 				<div className='content'>
 					<fieldset>
 						<legend>Sense Map</legend>
-						<h6 className="title">Your location: <span id="x">0</span>,<span id="y">0</span></h6>
+						<h6 className="title">Your location: ({this.state.x},{this.state.y})</h6>
 						<div className="grid">
 							<div className="grid-row">
 								<div className="grid-element" data-direction="nw"></div>
